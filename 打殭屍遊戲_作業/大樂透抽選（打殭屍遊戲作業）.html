@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/resset.css">
+  <title>大樂透抽獎機</title>
+  <style>
+    body {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      font-family: '微軟正黑體';
+    }
+
+    .container {
+      width: 100%;
+      height: 100vh;
+      background-image: url(./images/bg.jpg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #game {
+      width: 800px;
+      height: 800px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 50%;
+      /* overflow: hidden; */
+      position: relative;
+      border: 1px solid #aaa;
+      top: -45px;
+      z-index: 1;
+      cursor: pointer;
+      /* cursor: url(./images/hand.png) 35 10, auto; */
+    }
+
+    .ball {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      position: absolute;
+      float: left;
+    }
+
+    .ball-front {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: Crimson;
+      font-size: 36px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+    }
+
+    .ball-back {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: orange;
+      position: absolute;
+    }
+
+    #record {
+      color: white;
+      border-color: transparent transparent #000 transparent;
+      border-style: solid solid solid solid;
+      border-width: 180px;
+      border-radius: 1rem;
+      height: 100px;
+      width: 400px;
+      position: absolute;
+      bottom: 0px;
+    }
+
+    #record h1 {
+      font-size: 36px;
+      position: absolute;
+      left: -5px;
+      bottom: -100px;
+      animation: flash 1.5s linear infinite;
+    }
+
+    @keyframes flash {
+      50% {
+        text-shadow: 0 0 10px rgba(0, 255, 255, 1), 0 0 25px rgba(0, 255, 255, 0.8), 0 0 50px rgba(0, 255, 255, 0.5);
+      }
+    }
+
+    @keyframes box-flash {
+      50% {
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 25px rgba(0, 255, 255, 0.5);
+      }
+    }
+
+    #record input {
+      width: 100px;
+      font-size: 20px;
+      color: rgb(0, 0, 100);
+      background: rgba(0, 255, 255, 1);
+      border: 0;
+      border-radius: 1rem;
+      position: absolute;
+      bottom: -100px;
+      right: 2%;
+      animation: box-flash 1.5s linear infinite;
+    }
+
+    #record input:disabled {
+      color: rgb(0, 0, 50);
+      background: rgba(0, 255, 255, 0.5);
+      animation: none;
+    }
+
+    .text {
+      position: absolute;
+      bottom: -160px;
+      left: -50px;
+      width: 125%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 4px dotted white;
+      bottom: -175px;
+    }
+
+    .text p {
+      margin: 5px;
+    }
+
+    .text p span {
+      color: rgba(0, 255, 255, 1);
+      font-size: 20px;
+    }
+
+    #numberRecord {
+      position: absolute;
+      right: 4%;
+      width: 21%;
+      height: 60%;
+    }
+
+    #numberRecord h1 {
+      font-size: 2rem;
+      color: white;
+      text-align: center;
+      margin: 10px;
+      animation: flash 1.5s linear infinite;
+    }
+
+    #numberRecord p {
+      color: white;
+      font-size: 20px;
+      font-weight: 500;
+      text-align: center;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 1), 0 0 25px rgba(0, 0, 0, 0.8), 0 0 50px rgba(0, 0, 0, 0.5);
+      margin: 10px;
+    }
+
+    .box {
+      width: 102%;
+      height: 93%;
+      border: 4px dotted rgba(0, 255, 255, 1);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      overflow-y: auto;
+      animation: box-flash 1.5s linear infinite;
+    }
+
+    /* 捲軸底色 */
+    .box::-webkit-scrollbar-track {
+      background-color: rgba(0, 200, 255, 0.5);
+    }
+
+    /* 捲軸寬度 */
+    .box::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    /* 捲軸本體顏色 */
+    .box::-webkit-scrollbar-thumb {
+      background-color: aqua;
+    }
+
+    li {
+      font-size: 24px;
+      color: rgba(0, 255, 255, 1);
+      margin: 5px;
+      text-align: center;
+    }
+
+    li span {
+      color: white;
+      font-size: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div id="game">
+      <!-- <div class="ball"> -->
+      <!-- <div class="ball-front">49</div> -->
+      <!-- <div class="ball-back"></div> -->
+    </div>
+    <div id="record">
+      <h1>♛大樂透搖獎機</h1>
+      <input type="button" value=" Start！" id="btn-start">
+      <div class="text">
+        <p>➤ 還可以選 <span id="choice">6</span> 次</p>
+        <p>➤ 您的號碼：<span id="number"></span></p>
+      </div>
+    </div>
+
+    <div id="numberRecord">
+      <h1>✦結果紀錄✦</h1>
+      <div class="box">
+        <ul id="list">
+        </ul>
+      </div>
+      <p>※未滿18歲者，不得購買或兌領彩券</p>
+    </div>
+
+  </div>
+
+  <script src="./jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    let time = 0
+    // 6次選擇
+    let choice = 6
+
+    const move = (ball) => {
+      // 隨機移動
+      const top = `${15 + (Math.round(Math.random() * 60))}%`
+      const left = `${15 + (Math.round(Math.random() * 60))}%`
+      ball.stop().animate({
+        top: top,
+        // 如果 json 物件的值是變數，且跟 key 一樣時可以這樣寫
+        // left: left ---> left
+        left
+      }, 2000, function () {
+        // 移動完之後遞迴再動一次
+        move(ball)
+      })
+    }
+
+    // 點擊開始按鈕
+    $('#btn-start').click(function () {
+      // 紀錄這次是第幾組
+      time++
+      $('#list').append(
+        `<li id="time${time}">第${time}組<br></li>`
+      )
+
+      // 停用開始按鈕
+      $(this).attr('disabled', true)
+      // 重置次數和號碼
+      let choice = 6
+      $('#choice').text(`${choice}`)
+      $('#number').text('')
+
+      // 產生49顆號碼球
+      for (let i = 0; i < 49; i++) {
+        const ball = $(`
+        <div class="ball" id="${i + 1}" style="bottom:0px; left:50%;z-index: ${Math.round(Math.random() * 49)}">
+          <div class="ball-front">${i + 1}</div>
+          <div class="ball-back"></div>
+        </div>
+      `)
+        // 把球加入遊戲內
+        $('#game').append(ball)
+        // 讓球動起來
+        move(ball)
+      }
+
+      // 點擊球時
+      $('#game').on('click', '.ball-back', function () {
+        // 顯示那顆球的號碼
+        let number = $(this).prev().text()
+        if ($(this).prev()[0] !== undefined) {
+          console.log($(this).prev().text())
+
+          // 記錄在下方的框框
+          $('#number').append(`<span class="num">${number}號／</span>`)
+
+          // 跳出數字結果視窗
+          Swal.fire({
+            title: `${number}號`,
+            text: '祝您中獎',
+            imageUrl: './images/fukubiki_taikai.png',
+            imageWidth: 300,
+            imageAlt: 'Custom image',
+          })
+
+          // 記錄在右側的結果紀錄框
+          $(`#time${time}`).append(
+            `<span class="num">${number}號／</span>`)
+        }
+
+        // 選到的球跳到最上面
+        $(this).parent().css('z-index', '100')
+        // 停止移動
+        $(this).parent().stop()
+        $(this).css({
+          // 無法點兩下選取
+          'user-select': 'none',
+          // 無法按住拖曳
+          '-webkit-user-drag': 'none',
+          // 忽略點擊事件
+          'pointer-events': 'none'
+        })
+        // 移掉遮住數字的div
+        $(this).remove()
+
+        // 次數減一次
+        choice--
+        $('#choice').text(`${choice}`)
+
+        // 時間到
+        if (choice <= 0) {
+          choice = 6
+          // 畫面暫停
+          $('#game .ball').stop()
+          const result = $(`#time${time} .num`).text()
+
+          setTimeout(() => {
+            // 清除遊戲區域
+            $('#game .ball').remove()
+            // 重新啟動開始按鈕
+            $('#btn-start').attr('disabled', false)
+            // 跳出這一組的結果
+            Swal.fire({
+              title: ` 第${time}組結果`,
+              text: `${result}`,
+              imageUrl: './images/money_kinbut_texta.png',
+              imageWidth: 300,
+              imageAlt: 'Custom image',
+            })
+          }, 1000)
+        }
+      })
+    })
+
+  </script>
+
+</body>
+
+</html>
